@@ -29,12 +29,17 @@ jobs:
           echo "REQUESTS=${REQUESTS}" >> $GITHUB_ENV
 
       # 3. 发送邮件
-      - name: Send email
-        uses: dawidd6/action-send-mail@v3
+      - name: Send Email
+        uses: hilarion5/send-mail@v1
         with:
-          server_address: smtp.office365.com
-          server_port: 587
-          username: grevamhgwbq@hotmail.com
+          smtp-server: smtp.office365.com
+          smtp-port: 465
+          smtp-secure: true
+          from-email: ${{ secrets.EMAIL_ADDRESS }}
+          to-email: |
+            xielk@yeah.net
+            5817253@qq.com
+          username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Cloudflare Traffic Report for the Last 30 Days
           body: |
@@ -47,8 +52,13 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          to: |
-            xielk@yeah.net
-            5817253@qq.com
-          from: grevamhgwbq@hotmail.com
-          secure: true  # 使用 TLS/SSL 加密
+          html: |
+            <h1>Cloudflare Traffic Report</h1>
+            <p>Hi,</p>
+            <p>Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:</p>
+            <ul>
+              <li>Total Bandwidth: ${{ env.BANDWIDTH_TB }} TB</li>
+              <li>Total Requests: ${{ env.REQUESTS }}</li>
+            </ul>
+            <p>Best regards,</p>
+            <p>Cloudflare Monitoring</p>
