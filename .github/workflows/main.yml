@@ -1,0 +1,59 @@
+name: 8525533 Cloudflare Traffic Report
+
+
+
+jobs:
+  get-cloudflare-traffic:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Fetch traffic data from Cloudflare
+      id: fetch-data
+      run: |
+        ZONE_ID="a768a88b8f71866844da6c81b533ba9c"
+        CF_API_KEY=${{ secrets.CF_API_KEY }}
+        CF_EMAIL="aaron.bzhan@gmail.com"
+        START_DATE=$(date -d '30 days ago' +%Y-%m-%d)
+        END_DATE=$(date +%Y-%m-%d)
+
+        # 通过Cloudflare API查询流量数据
+        RESPONSE=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/analytics/dashboard?since=$START_DATE&until=$END_DATE" \
+        -H "X-Auth-Email: $CF_EMAIL" \
+        -H "X-Auth-Key: $CF_API_KEY" \
+        -H "Content-Type: application/json")
+
+        # 提取重要的流量数据
+        BANDWIDTH=$(echo "$RESPONSE" | jq '.result.totals.bandwidth.all')
+        REQUESTS=$(echo "$RESPONSE" | jq '.result.totals.requests.all')
+
+        # 输出数据到GitHub Action环境变量中，方便下一步使用
+        echo "::set-output name=bandwidth::$BANDWIDTH"
+        echo "::set-output name=requests::$REQUESTS"
+    - name: Send traffic report via email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.office365.com
+        server_port: 587
+        username: grevamhgwbq@hotmail.com
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        secure: true
+        subject: Cloudflare Traffic Report for the Last 30 Days
+        body: |
+          Hi,
+
+          Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:
+
+          - Total Bandwidth: $(( {{ steps.fetch-data.outputs.bandwidth }} / 1099511627776 )) TB
+          - Total Requests: ${{ steps.fetch-data.outputs.requests }}
+
+          Best regards,
+          Cloudflare Monitoring
+        to: |
+          xielk@yeah.net
+          5817253@qq.com
+        from: @outlook.com
+
+
