@@ -1,6 +1,7 @@
 name: 8525533 Cloudflare Traffic Report
 
-
+on:
+  workflow_dispatch:  # 允许手动触发工作流
 
 jobs:
   get-cloudflare-traffic:
