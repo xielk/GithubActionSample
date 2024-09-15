@@ -1,4 +1,4 @@
-name: Send Email with mutt
+name: Send Email with msmtp and sendmail
 
 on:
   workflow_dispatch:
@@ -12,15 +12,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install mutt
-      - name: Install mutt
-        run: sudo apt-get update && sudo apt-get install -y mutt
+      # 2. Install msmtp and sendmail
+      - name: Install msmtp and sendmail
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y msmtp msmtp-mta
 
-      # 3. Send email using mutt
+      # 3. Configure msmtp
+      - name: Configure msmtp
+        run: |
+          echo "defaults" > ~/.msmtprc
+          echo "auth login" >> ~/.msmtprc
+          echo "tls on" >> ~/.msmtprc
+          echo "tls_trust_file /etc/ssl/certs/ca-certificates.crt" >> ~/.msmtprc
+          echo "host smtp.office365.com" >> ~/.msmtprc
+          echo "port 587" >> ~/.msmtprc
+          echo "user ${{ secrets.EMAIL_ADDRESS }}" >> ~/.msmtprc
+          echo "password ${{ secrets.EMAIL_PASSWORD }}" >> ~/.msmtprc
+          echo "from ${{ secrets.EMAIL_ADDRESS }}" >> ~/.msmtprc
+          chmod 600 ~/.msmtprc
+
+      # 4. Send email using sendmail and msmtp
       - name: Send email
         env:
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: xielk@yeah.net,5817253@qq.com
           EMAIL_SUBJECT: Cloudflare Traffic Report for the Last 30 Days
           EMAIL_BODY: |
@@ -34,9 +48,4 @@ jobs:
             Best regards,
             Cloudflare Monitoring
         run: |
-          echo "$EMAIL_BODY" | mutt -s "$EMAIL_SUBJECT" \
-              -e "set smtp_url=smtp://$EMAIL_ADDRESS:$EMAIL_PASSWORD@smtp.office365.com:587/" \
-              -e "set smtp_authenticators=login" \
-              -e "set smtp_use_starttls=yes" \
-              -e "set ssl_force_tls=yes" \
-              "$EMAIL_TO"
+          echo -e "Subject: $EMAIL_SUBJECT\nTo: $EMAIL_TO\n\n$EMAIL_BODY" | sendmail -t
