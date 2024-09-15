@@ -1,47 +1,29 @@
-name: Cloudflare Traffic Report
+name: Send Email with Swaks
 
 on:
   workflow_dispatch:
 
 jobs:
-  fetch-and-email:
+  send-email:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
+      # 1. Checkout the repository (optional, if you need access to the repo's files)
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. 获取 Cloudflare 流量数据的步骤（请根据你的实际情况调整此步骤）
-      - name: Fetch Cloudflare Traffic Data
-        id: fetch-data
-        run: |
-          # 模拟获取带宽和请求数量的逻辑
-          # 你需要用实际的 API 调用替换以下内容
-          BANDWIDTH_BYTES=104857600  # 模拟的带宽数据，单位是 Bytes
-          REQUESTS=1500000  # 模拟的请求数量
+      # 2. Install swaks
+      - name: Install swaks
+        run: sudo apt-get update && sudo apt-get install -y swaks
 
-          # 计算带宽（TB）
-          BANDWIDTH_TB=$(echo "scale=10; $BANDWIDTH_BYTES / 1099511627776" | bc)
-
-          # 设置环境变量
-          echo "BANDWIDTH_TB=${BANDWIDTH_TB}" >> $GITHUB_ENV
-          echo "REQUESTS=${REQUESTS}" >> $GITHUB_ENV
-
-      # 3. 发送邮件
-      - name: Send a mail
-        uses: action-pack/send-mail@v1
-        with:
-          # Required connection URL:
-          connection_url: smtp+starttls://${{ secrets.EMAIL_ADDRESS }}:${{ secrets.EMAIL_PASSWORD }}@smtp.office365.com:587
-          # Required mail subject:
-          subject: Cloudflare Traffic Report for the Last 30 Days
-          # Required recipients' addresses:
-          to: xielk@yeah.net,5817253@qq.com
-          # Required sender full name (address can be skipped):
-          from: Cloudflare Monitoring <${{ secrets.EMAIL_ADDRESS }}>
-          # Optional plain body:
-          body: |
+      # 3. Send email using swaks and capture the output
+      - name: Send email
+        id: send_email
+        env:
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_TO: xielk@yeah.net
+          EMAIL_SUBJECT: Cloudflare Traffic Report for the Last 30 Days
+          EMAIL_BODY: |
             Hi,
 
             Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:
@@ -51,25 +33,17 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          # Optional HTML body read from file:
-          # html_body: file://README.html
-          # Optional carbon copy recipients:
-          # cc: example-cc@example.com
-          # Optional blind carbon copy recipients:
-          # bcc: example-bcc@example.com
-          # Optional recipient of the email response:
-          # reply_to: reply@example.com
-          # Optional Message ID this message is replying to:
-          # in_reply_to: <message-id@example.com>
-          # Optional unsigned/invalid certificates allowance:
-          ignore_cert: true
-          # Optional converting Markdown to HTML (set content_type to text/html too):
-          # convert_markdown: true
-          # Optional attachments:
-          # attachments: attachments.zip,git.diff,./dist/static/*.js
-          # Optional priority: 'high', 'normal' (default) or 'low'
-          # priority: low
-          # Optional nodemailerlog: true/false
-          # nodemailerlog: false
-          # Optional nodemailerdebug: true/false if true lognodem will also be set true
-          # nodemailerdebug: false
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          OUTPUT=$(swaks --to "$EMAIL_TO" \
+                         --from "$EMAIL_ADDRESS" \
+                         --server smtp.office365.com \
+                         --port 587 \
+                         --auth LOGIN \
+                         --auth-user "$EMAIL_ADDRESS" \
+                         --auth-password "$EMAIL_PASSWORD" \
+                         --tls \
+                         --header "Subject: $EMAIL_SUBJECT" \
+                         --body "$EMAIL_BODY")
+          echo "Email sent successfully. Output:"
+          echo "$OUTPUT"
