@@ -22,6 +22,14 @@ jobs:
 
           echo "::set-output name=bandwidth_tb::$BANDWIDTH_TB"
           echo "::set-output name=requests::$REQUESTS"
+      # 3. 调试 SMTP 连接（可选）
+      - name: Test SMTP connection
+        run: |
+          echo | openssl s_client -connect smtp.office365.com:587 -starttls smtp
+
+      # 4. 启用调试日志（可选）
+      - name: Enable debug logging
+        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
 
       # 2. 发送邮件
       - name: Send traffic report via email
@@ -47,12 +55,3 @@ jobs:
             xielk@yeah.net
             5817253@qq.com
           from: grevamhgwbq@hotmail.com
-
-      # 3. 调试 SMTP 连接（可选）
-      - name: Test SMTP connection
-        run: |
-          echo | openssl s_client -connect smtp.office365.com:587 -starttls smtp
-
-      # 4. 启用调试日志（可选）
-      - name: Enable debug logging
-        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
