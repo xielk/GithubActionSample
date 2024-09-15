@@ -30,6 +30,7 @@ jobs:
           echo "user ${{ secrets.EMAIL_ADDRESS }}" >> ~/.msmtprc
           echo "password ${{ secrets.EMAIL_PASSWORD }}" >> ~/.msmtprc
           echo "from ${{ secrets.EMAIL_ADDRESS }}" >> ~/.msmtprc
+          echo "account default" >> ~/.msmtprc
           chmod 600 ~/.msmtprc
 
       # 4. Send email using sendmail and msmtp
