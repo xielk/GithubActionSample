@@ -22,6 +22,50 @@ jobs:
 
           echo "::set-output name=bandwidth_tb::$BANDWIDTH_TB"
           echo "::set-output name=requests::$REQUESTS"
+
+      # 2. 运行 Python 脚本发送邮件
+      - name: Send traffic report via email
+        run: |
+          python3 -c "
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
+
+# 邮件配置
+smtp_server = 'smtp.office365.com'
+smtp_port = 587
+smtp_user = 'grevamhgwbq@hotmail.com'
+smtp_password = '${{ secrets.EMAIL_PASSWORD }}'
+
+# 邮件内容
+subject = 'Cloudflare Traffic Report for the Last 30 Days'
+body = f'''
+Hi,
+
+Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:
+
+- Total Bandwidth: ${{{steps.fetch-data.outputs.bandwidth_tb}}} TB
+- Total Requests: ${{{steps.fetch-data.outputs.requests}}}
+
+Best regards,
+Cloudflare Monitoring
+'''
+
+# 创建邮件
+msg = MIMEMultipart()
+msg['From'] = formataddr(('Cloudflare Monitoring', smtp_user))
+msg['To'] = 'xielk@yeah.net, 5817253@qq.com'
+msg['Subject'] = subject
+msg.attach(MIMEText(body, 'plain'))
+
+# 发送邮件
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.starttls()
+    server.login(smtp_user, smtp_password)
+    server.sendmail(smtp_user, ['xielk@yeah.net', '5817253@qq.com'], msg.as_string())
+          "
+
       # 3. 调试 SMTP 连接（可选）
       - name: Test SMTP connection
         run: |
@@ -30,28 +74,3 @@ jobs:
       # 4. 启用调试日志（可选）
       - name: Enable debug logging
         run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
-
-      # 2. 发送邮件
-      - name: Send traffic report via email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.office365.com
-          server_port: 587
-          username: grevamhgwbq@hotmail.com
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          secure: true
-          subject: Cloudflare Traffic Report for the Last 30 Days
-          body: |
-            Hi,
-
-            Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:
-
-            - Total Bandwidth: ${{ steps.fetch-data.outputs.bandwidth_tb }} TB
-            - Total Requests: ${{ steps.fetch-data.outputs.requests }}
-
-            Best regards,
-            Cloudflare Monitoring
-          to: |
-            xielk@yeah.net
-            5817253@qq.com
-          from: grevamhgwbq@hotmail.com
