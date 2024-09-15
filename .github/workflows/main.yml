@@ -1,4 +1,4 @@
-name: Send Email with mailx
+name: Send Email with mailutils
 
 on:
   workflow_dispatch:
@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install mailx
-      - name: Install mailx
-        run: sudo apt-get update && sudo apt-get install -y heirloom-mailx
+      # 2. Install mailutils
+      - name: Install mailutils
+        run: sudo apt-get update && sudo apt-get install -y mailutils
 
-      # 3. Send email using mailx
+      # 3. Send email using mailutils
       - name: Send email
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
