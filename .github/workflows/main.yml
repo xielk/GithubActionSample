@@ -1,4 +1,4 @@
-name: Send Email with mailutils
+name: Send Email with mutt
 
 on:
   workflow_dispatch:
@@ -12,14 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install mailutils
-      - name: Install mailutils
-        run: sudo apt-get update && sudo apt-get install -y mailutils
+      # 2. Install mutt
+      - name: Install mutt
+        run: sudo apt-get update && sudo apt-get install -y mutt
 
-      # 3. Send email using mailutils
+      # 3. Send email using mutt
       - name: Send email
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: xielk@yeah.net,5817253@qq.com
           EMAIL_SUBJECT: Cloudflare Traffic Report for the Last 30 Days
           EMAIL_BODY: |
@@ -32,13 +33,10 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
-          echo "$EMAIL_BODY" | mail -s "$EMAIL_SUBJECT" \
-              -S smtp=smtp.office365.com \
-              -S smtp-auth=login \
-              -S smtp-auth-user="$EMAIL_ADDRESS" \
-              -S smtp-auth-password="$EMAIL_PASSWORD" \
-              -S smtp-use-starttls \
-              -S smtp-port=587 \
+          echo "$EMAIL_BODY" | mutt -s "$EMAIL_SUBJECT" \
+              -e "set smtp_url=smtp://$EMAIL_ADDRESS:$EMAIL_PASSWORD@smtp.office365.com:587/" \
+              -e "set smtp_authenticators=login" \
+              -e "set smtp_use_starttls=yes" \
+              -e "set ssl_force_tls=yes" \
               "$EMAIL_TO"
