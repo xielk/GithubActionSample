@@ -29,14 +29,18 @@ jobs:
           echo "REQUESTS=${REQUESTS}" >> $GITHUB_ENV
 
       # 3. 发送邮件
-      - name: Send traffic report via email
+      - name: Send email
         uses: devellany/send-mailer@v1.0.2
         with:
-          server_address: smtp.office365.com
-          server_port: 587
-          username: grevamhgwbq@hotmail.com
+          host: smtp.office365.com
+          port: 587
+          account: grevamhgwbq@hotmail.com
           password: ${{ secrets.EMAIL_PASSWORD }}
-          secure: true
+          sender: grevamhgwbq@hotmail.com
+          from: grevamhgwbq@hotmail.com
+          to: |
+            xielk@yeah.net
+            5817253@qq.com
           subject: Cloudflare Traffic Report for the Last 30 Days
           body: |
             Hi,
@@ -48,11 +52,6 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          to: |
-            xielk@yeah.net
-            5817253@qq.com
-          from: grevamhgwbq@hotmail.com
-
-      # 4. 启用调试日志（可选）
-      - name: Enable debug logging
-        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+          contentType: text/plain
+          # 如果有附件，可以在这里添加
+          # attachments: '[{"path":"README.md"}]'
