@@ -1,6 +1,7 @@
 name: 8525533 Cloudflare Traffic Report
 
 
+
 jobs:
   get-cloudflare-traffic:
     runs-on: ubuntu-latest
@@ -53,6 +54,6 @@ jobs:
         to: |
           xielk@yeah.net
           5817253@qq.com
-        from: @outlook.com
+        from: grevamhgwbq@hotmail.com
 
 
