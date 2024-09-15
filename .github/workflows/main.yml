@@ -30,17 +30,12 @@ jobs:
 
       # 3. 发送邮件
       - name: Send email
-        uses: devellany/send-mailer@v1.0.2
+        uses: dawidd6/action-send-mail@v3
         with:
-          host: smtp.office365.com
-          port: 587
-          account: grevamhgwbq@hotmail.com
+          server_address: smtp.office365.com
+          server_port: 587
+          username: grevamhgwbq@hotmail.com
           password: ${{ secrets.EMAIL_PASSWORD }}
-          sender: grevamhgwbq@hotmail.com
-          from: grevamhgwbq@hotmail.com
-          to: |
-            xielk@yeah.net
-            5817253@qq.com
           subject: Cloudflare Traffic Report for the Last 30 Days
           body: |
             Hi,
@@ -52,6 +47,8 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          contentType: text/plain
-          # 如果有附件，可以在这里添加
-          # attachments: '[{"path":"README.md"}]'
+          to: |
+            xielk@yeah.net
+            5817253@qq.com
+          from: grevamhgwbq@hotmail.com
+          secure: true  # 使用 TLS/SSL 加密
