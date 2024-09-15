@@ -8,13 +8,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 获取 Cloudflare 流量数据的步骤（这里需要根据你的实际情况编写）
+      # 1. 获取 Cloudflare 流量数据的步骤（请根据你的实际情况调整此步骤）
       - name: Fetch Cloudflare Traffic Data
         id: fetch-data
         run: |
-          # 获取带宽和请求数量的逻辑
-          # 假设带宽和请求数量是从某个 API 请求获取的。
-          # 将以下输出替换为真实 API 的调用和解析。
+          # 模拟获取带宽和请求数量的逻辑
+          # 你需要用实际的 API 调用替换以下内容
           BANDWIDTH_BYTES=104857600  # 模拟的带宽数据，单位是 Bytes
           REQUESTS=1500000  # 模拟的请求数量
 
@@ -48,3 +47,12 @@ jobs:
             xielk@yeah.net
             5817253@qq.com
           from: grevamhgwbq@hotmail.com
+
+      # 3. 调试 SMTP 连接（可选）
+      - name: Test SMTP connection
+        run: |
+          echo | openssl s_client -connect smtp.office365.com:587 -starttls smtp
+
+      # 4. 启用调试日志（可选）
+      - name: Enable debug logging
+        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
