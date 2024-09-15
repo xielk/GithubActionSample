@@ -29,18 +29,18 @@ jobs:
           echo "REQUESTS=${REQUESTS}" >> $GITHUB_ENV
 
       # 3. 发送邮件
-      - name: Send Email
-        uses: hilarion5/send-mail@v1
+      - name: Send email
+        uses: devellany/send-mailer@v1.0.2
         with:
-          smtp-server: smtp.office365.com
-          smtp-port: 465
-          smtp-secure: true
-          from-email: ${{ secrets.EMAIL_ADDRESS }}
-          to-email: |
+          host: smtp.office365.com
+          port: 465
+          account: ${{ secrets.EMAIL_ADDRESS }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          sender: grevamhgwbq@hotmail.com
+          from: ${{ secrets.EMAIL_ADDRESS }}
+          to: |
             xielk@yeah.net
             5817253@qq.com
-          username: ${{ secrets.EMAIL_ADDRESS }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Cloudflare Traffic Report for the Last 30 Days
           body: |
             Hi,
@@ -52,13 +52,7 @@ jobs:
 
             Best regards,
             Cloudflare Monitoring
-          html: |
-            <h1>Cloudflare Traffic Report</h1>
-            <p>Hi,</p>
-            <p>Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:</p>
-            <ul>
-              <li>Total Bandwidth: ${{ env.BANDWIDTH_TB }} TB</li>
-              <li>Total Requests: ${{ env.REQUESTS }}</li>
-            </ul>
-            <p>Best regards,</p>
-            <p>Cloudflare Monitoring</p>
+          contentType: text/plain
+          # Optional attachment files (JSON type. require property 'path')
+          # If you have any attachments, specify them here
+          # attachments: '[{"path":"README.md"}]'
