@@ -1,4 +1,4 @@
-name: Send Email with Swaks
+name: Send Email with mailx
 
 on:
   workflow_dispatch:
@@ -12,16 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install swaks
-      - name: Install swaks
-        run: sudo apt-get update && sudo apt-get install -y swaks
+      # 2. Install mailx
+      - name: Install mailx
+        run: sudo apt-get update && sudo apt-get install -y heirloom-mailx
 
-      # 3. Send email using swaks and capture the output
+      # 3. Send email using mailx
       - name: Send email
-        id: send_email
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          EMAIL_TO: xielk@yeah.net
+          EMAIL_TO: xielk@yeah.net,5817253@qq.com
           EMAIL_SUBJECT: Cloudflare Traffic Report for the Last 30 Days
           EMAIL_BODY: |
             Hi,
@@ -35,15 +34,11 @@ jobs:
             Cloudflare Monitoring
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
-          OUTPUT=$(swaks --to "$EMAIL_TO" \
-                         --from "$EMAIL_ADDRESS" \
-                         --server smtp.office365.com \
-                         --port 587 \
-                         --auth LOGIN \
-                         --auth-user "$EMAIL_ADDRESS" \
-                         --auth-password "$EMAIL_PASSWORD" \
-                         --tls \
-                         --header "Subject: $EMAIL_SUBJECT" \
-                         --body "$EMAIL_BODY")
-          echo "Email sent successfully. Output:"
-          echo "$OUTPUT"
+          echo "$EMAIL_BODY" | mail -s "$EMAIL_SUBJECT" \
+              -S smtp=smtp.office365.com \
+              -S smtp-auth=login \
+              -S smtp-auth-user="$EMAIL_ADDRESS" \
+              -S smtp-auth-password="$EMAIL_PASSWORD" \
+              -S smtp-use-starttls \
+              -S smtp-port=587 \
+              "$EMAIL_TO"
