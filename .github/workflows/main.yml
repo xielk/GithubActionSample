@@ -8,7 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 获取 Cloudflare 流量数据的步骤（请根据你的实际情况调整此步骤）
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 获取 Cloudflare 流量数据的步骤（请根据你的实际情况调整此步骤）
       - name: Fetch Cloudflare Traffic Data
         id: fetch-data
         run: |
@@ -20,18 +24,34 @@ jobs:
           # 计算带宽（TB）
           BANDWIDTH_TB=$(echo "scale=10; $BANDWIDTH_BYTES / 1099511627776" | bc)
 
+          # 设置环境变量
           echo "BANDWIDTH_TB=${BANDWIDTH_TB}" >> $GITHUB_ENV
           echo "REQUESTS=${REQUESTS}" >> $GITHUB_ENV
 
-      # 2. 运行 Python 脚本发送邮件
+      # 3. 发送邮件
       - name: Send traffic report via email
-        run: |
-          python3 send_email.py
+        uses: devellany/send-mailer@v1.0.2
+        with:
+          server_address: smtp.office365.com
+          server_port: 587
+          username: grevamhgwbq@hotmail.com
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          secure: true
+          subject: Cloudflare Traffic Report for the Last 30 Days
+          body: |
+            Hi,
 
-      # 3. 调试 SMTP 连接（可选）
-      - name: Test SMTP connection
-        run: |
-          echo | openssl s_client -connect smtp.office365.com:587 -starttls smtp
+            Here is the Cloudflare traffic report for the zone ID a768a88b8f71866844da6c81b533ba9c for the last 30 days:
+
+            - Total Bandwidth: ${{ env.BANDWIDTH_TB }} TB
+            - Total Requests: ${{ env.REQUESTS }}
+
+            Best regards,
+            Cloudflare Monitoring
+          to: |
+            xielk@yeah.net
+            5817253@qq.com
+          from: grevamhgwbq@hotmail.com
 
       # 4. 启用调试日志（可选）
       - name: Enable debug logging
