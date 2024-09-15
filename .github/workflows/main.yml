@@ -1,7 +1,6 @@
 name: 8525533 Cloudflare Traffic Report
 
 
-
 jobs:
   get-cloudflare-traffic:
     runs-on: ubuntu-latest
