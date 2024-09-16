@@ -16,6 +16,6 @@ jobs:
           sender: CloudFlare_CDN
           from: ${{secrets.EMAIL_ADDRESS}}
           subject: Github Actions job result
-          body: file://README.md
+          body: file://send_email.py
           attachments: '[{"path":"send_email.py"}]'
-          to: xielk@yeah.net,5817253@qq.com
+          to: xielk@yeah.net
