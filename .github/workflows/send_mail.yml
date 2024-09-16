@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Send email
+      uses: devellany/send-mail@v1.0.2
+      with:
+          host: smtp.office365.com
+          account: ${{secrets.EMAIL_ADDRESS}}
+          password: ${{secrets.EMAIL_PASSWORD}}
+          sender: CloudFlare_CDN
+          from: ${{secrets.EMAIL_ADDRESS}}
+          subject: Github Actions job result
+          body: file://README.md
+          attachments: '[{"path":"send_email.py"}]'
+          to: xielk@yeah.net,5817253@qq.com
