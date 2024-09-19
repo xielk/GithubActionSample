@@ -17,7 +17,7 @@ jobs:
           server_address: smtp.office365.com
           server_port: 587
           secure: false
-          username: ${{secrets.EMAIL_ADDRESS}}
+          username: grevamhgwbq
           password: ${{secrets.EMAIL_PASSWORD}}
           subject: Github Actions job result
           to: xielk@yeah.net,5817253@qq.com
