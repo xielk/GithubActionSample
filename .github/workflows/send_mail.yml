@@ -18,7 +18,7 @@ jobs:
           swaks --to xielk@yeah.net \
                 --from ${{ secrets.EMAIL_ADDRESS }} \
                 --server smtp.office365.com \
-                --auth LOGIN \
+                --auth PLAIN \
                 --auth-user ${{ secrets.EMAIL_ADDRESS }} \
                 --auth-password ${{ secrets.EMAIL_PASSWORD }} \
                 --tls --port 587
