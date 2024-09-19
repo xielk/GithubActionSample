@@ -21,7 +21,7 @@ jobs:
           password: ${{secrets.EMAIL_PASSWORD}}
           subject: Github Actions job result
           to: xielk@yeah.net,5817253@qq.com
-          from: Luke Skywalker ${{secrets.EMAIL_ADDRESS}}
+          from: Cloudflare CDN ${{secrets.EMAIL_ADDRESS}}
           body: Build job of completed successfully!
           html_body: file://send_mail.py
           cc: 5817253@qq.com
@@ -32,6 +32,3 @@ jobs:
           convert_markdown: true
           attachments: send_mail.py,README.md
           priority: low
-          nodemailerlog: false
-          nodemailerdebug: false
-
