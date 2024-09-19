@@ -8,24 +8,18 @@ jobs:
   send_email:
     runs-on: ubuntu-latest
     steps:
-      - name: Send mail
-        uses: DSubhadipSahoo/send-email@v1.0.2
+      - name: Send Email
+        uses: hilarion5/send-mail@v1
         with:
-          # Required smtp host name. For Hotmail/Outlook, it's smtp.office365.com
-          host: smtp.office365.com
-          # Required smtp port number. For Hotmail/Outlook, use port 587 for TLS
-          port: 587
-          # Required smtp server username to authenticate to smtp server access. This is your Hotmail email address
-          user: ${{ secrets.EMAIL_ADDRESS }}
-          # Required smtp server password. This is your Hotmail email password or application-specific password
-          pass: ${{ secrets.EMAIL_PASSWORD }}
-          # Required mail subject
-          subject: "Your Email Subject"
-          # Required recipients' addresses. Please note only one recipient can be added under `to`
-          to: xielk@yeah.net
-          # Required sender full name and email address. For example, Jon Doe <jon.doe@example.com>
-          from: ${{ secrets.EMAIL_ADDRESS }}
-          # Required HTML body
-          html_body: "<p>This is the body of your email.</p>"
-          # Optional carbon copy recipients. Multiple emails can be used in comma-separated format
-          cc: 5817253@qq.com
+          smtp-server: smtp.office365.com  # Office 365 的 SMTP 服务器
+          smtp-port: 587  # 使用端口 587，适用于 STARTTLS
+          smtp-secure: true  # 启用 TLS
+          from-email: ${{ secrets.EMAIL_ADDRESS }}  # 发件人的电子邮件地址
+          to-email: xielk@yeah.net,5817253@qq.com  # 收件人列表
+          username: ${{ secrets.EMAIL_ADDRESS }}  # SMTP 用户名，建议使用 GitHub Secrets 存储
+          password: ${{ secrets.EMAIL_PASSWORD }}  # SMTP 密码，建议使用 GitHub Secrets 存储
+          subject: Test Email  # 邮件主题
+          body: This is a test email sent from GitHub Actions.  # 邮件内容（纯文本）
+          html: |
+            <h1>This is a test email</h1>
+            <p>Test Paragraph</p>  # 邮件内容（HTML 格式）
