@@ -1,21 +1,31 @@
-name:  SENDMAIL
+name: Send mail
+
 on:
   workflow_dispatch:
 
+
 jobs:
-  build:
+  send_email:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Send email
-      uses: devellany/send-mail@v1.0.2
-      with:
+      - name: Send mail
+        uses: DSubhadipSahoo/send-email@v1
+        with:
+          # Required smtp host name. For Hotmail/Outlook, it's smtp.office365.com
           host: smtp.office365.com
-          account: ${{secrets.EMAIL_ADDRESS}}
-          password: ${{secrets.EMAIL_PASSWORD}}
-          sender: CloudFlare_CDN
-          from: ${{secrets.EMAIL_ADDRESS}}
-          subject: Github Actions job result
-          body: file://send_email.py
-          attachments: '[{"path":"send_email.py"}]'
+          # Required smtp port number. For Hotmail/Outlook, use port 587 for TLS
+          port: 587
+          # Required smtp server username to authenticate to smtp server access. This is your Hotmail email address
+          user: ${{ secrets.EMAIL_ADDRESS }}
+          # Required smtp server password. This is your Hotmail email password or application-specific password
+          pass: ${{ secrets.EMAIL_PASSWORD }}
+          # Required mail subject
+          subject: "Your Email Subject"
+          # Required recipients' addresses. Please note only one recipient can be added under `to`
           to: xielk@yeah.net
+          # Required sender full name and email address. For example, Jon Doe <jon.doe@example.com>
+          from: ${{ secrets.EMAIL_ADDRESS }}
+          # Required HTML body
+          html_body: "<p>This is the body of your email.</p>"
+          # Optional carbon copy recipients. Multiple emails can be used in comma-separated format
+          cc: 5817253@qq.com
