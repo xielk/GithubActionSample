@@ -23,12 +23,12 @@ jobs:
           to: xielk@yeah.net,5817253@qq.com
           from: Cloudflare CDN ${{secrets.EMAIL_ADDRESS}}
           body: Build job of completed successfully!
-          html_body: file://send_mail.py
+          html_body: file://send_email.py
           cc: 5817253@qq.com
           bcc: 5817253@qq.com
           reply_to: xielk@yeah.net
           in_reply_to: <5817253@qq.com>
           ignore_cert: true
           convert_markdown: true
-          attachments: send_mail.py,README.md
+          attachments: send_email.py,README.md
           priority: low
