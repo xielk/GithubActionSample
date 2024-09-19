@@ -1,4 +1,4 @@
-name: Send Email using swaks
+name: Send Email
 
 on:
   workflow_dispatch:
@@ -8,17 +8,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Install swaks
-      - name: Install swaks
-        run: sudo apt-get update && sudo apt-get install -y swaks
-
-      # Step 2: Send email using swaks
-      - name: Send email
-        run: |
-          swaks --to xielk@yeah.net \
-                --from ${{ secrets.EMAIL_ADDRESS }} \
-                --server smtp.office365.com \
-                --auth PLAIN \
-                --auth-user ${{ secrets.EMAIL_ADDRESS }} \
-                --auth-password ${{ secrets.EMAIL_PASSWORD }} \
-                --tls --port 587
+    - name: Send email notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.example.com  # 你的 SMTP 服务器地址
+        server_port: 465  # SMTP 服务器端口
+        username: ${{ secrets.EMAIL_ADDRESS }}  # 你的邮箱
+        password: ${{ secrets.EMAIL_PASSWORD }}  # 你的邮箱密码
+        subject: 'GitHub Actions Email Notification'
+        body: 'This is a test email sent from GitHub Actions!'
+        to: recipient@example.com  # 收件人邮箱
+        from: ${{ secrets.EMAIL_ADDRESS }}  # 发件人邮箱
+        secure: true  # 使用 SSL/TLS 加密
