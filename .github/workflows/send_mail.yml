@@ -1,34 +1,24 @@
-
-name: Send Email
+name: Send Email using swaks
 
 on:
   workflow_dispatch:
-
 
 jobs:
   send_email:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send mail
-        uses: dawidd6/action-send-mail@v3.12.0
-        with:
-          connection_url: smtp://${{secrets.EMAIL_ADDRESS}}:${{secrets.EMAIL_PASSWORD}}@smtp.office365.com:465
-          server_address: smtp.office365.com
-          server_port: 465
-          secure: false
-          username: ${{secrets.EMAIL_ADDRESS}}
-          password: ${{secrets.EMAIL_PASSWORD}}
-          subject: Github Actions job result
-          to: xielk@yeah.net,5817253@qq.com
-          from: Cloudflare CDN ${{secrets.EMAIL_ADDRESS}}
-          body: Build job of completed successfully!
-          
-          cc: 5817253@qq.com
-          bcc: 5817253@qq.com
-          reply_to: xielk@yeah.net
-          in_reply_to: <5817253@qq.com>
-          ignore_cert: true
-          convert_markdown: true
-          attachments: send_email.py,README.md
-          priority: low
+      # Step 1: Install swaks
+      - name: Install swaks
+        run: sudo apt-get update && sudo apt-get install -y swaks
+
+      # Step 2: Send email using swaks
+      - name: Send email
+        run: |
+          swaks --to xielk@yeah.net \
+                --from ${{ secrets.EMAIL_ADDRESS }} \
+                --server smtp.office365.com \
+                --auth LOGIN \
+                --auth-user ${{ secrets.EMAIL_ADDRESS }} \
+                --auth-password ${{ secrets.EMAIL_PASSWORD }} \
+                --tls --port 587
