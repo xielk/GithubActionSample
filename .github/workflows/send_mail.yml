@@ -1,4 +1,5 @@
-name: Send mail
+
+name: Send Email
 
 on:
   workflow_dispatch:
@@ -7,19 +8,21 @@ on:
 jobs:
   send_email:
     runs-on: ubuntu-latest
+
     steps:
       - name: Send Email
-        uses: hilarion5/send-mail@v1
+        uses: dante-evans/send-email@v1
         with:
-          smtp-server: smtp.office365.com  # Office 365 的 SMTP 服务器
-          smtp-port: 587  # 使用端口 587，适用于 STARTTLS
-          smtp-secure: false  # 启用 TLS
-          from-email: ${{ secrets.EMAIL_ADDRESS }}  # 发件人的电子邮件地址
-          to-email: xielk@yeah.net,5817253@qq.com  # 收件人列表
-          username: ${{ secrets.EMAIL_ADDRESS }}  # SMTP 用户名，建议使用 GitHub Secrets 存储
-          password: ${{ secrets.EMAIL_PASSWORD }}  # SMTP 密码，建议使用 GitHub Secrets 存储
-          subject: Test Email  # 邮件主题
-          body: This is a test email sent from GitHub Actions.  # 邮件内容（纯文本）
+          smtp-server: smtp.office365.com
+          smtp-port: 587
+          smtp-secure: false
+          from-email: ${{ secrets.EMAIL_ADDRESS }}
+          to-email: recipient@example.com
+          username: ${{ secrets.EMAIL_ADDRESS }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Test Email
+          body: This is a test email sent from GitHub Actions.
           html: |
             <h1>This is a test email</h1>
-            <p>Test Paragraph</p>  # 邮件内容（HTML 格式）
+            <p>Test Paragraph</p>
+
