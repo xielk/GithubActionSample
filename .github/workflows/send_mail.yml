@@ -10,19 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Email
-        uses: dante-evans/send-email@v1
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3.12.0
         with:
-          smtp-server: smtp.office365.com
-          smtp-port: 587
-          smtp-secure: false
-          from-email: ${{ secrets.EMAIL_ADDRESS }}
-          to-email: xielk@yeah.net
-          username: ${{ secrets.EMAIL_ADDRESS }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Test Email
-          body: This is a test email sent from GitHub Actions.
-          html: |
-            <h1>This is a test email</h1>
-            <p>Test Paragraph</p>
+          connection_url: smtp://${{secrets.EMAIL_ADDRESS}}:${{secrets.EMAIL_PASSWORD}}@smtp.office365.com:587
+          server_address: smtp.office365.com
+          server_port: 587
+          secure: false
+          username: ${{secrets.EMAIL_ADDRESS}}
+          password: ${{secrets.EMAIL_PASSWORD}}
+          subject: Github Actions job result
+          to: xielk@yeah.net,5817253@qq.com
+          from: Luke Skywalker ${{secrets.EMAIL_ADDRESS}}
+          body: Build job of completed successfully!
+          html_body: file://send_mail.py
+          cc: 5817253@qq.com
+          bcc: 5817253@qq.com
+          reply_to: xielk@yeah.net
+          in_reply_to: <5817253@qq.com>
+          ignore_cert: true
+          convert_markdown: true
+          attachments: send_mail.py,README.md
+          priority: low
+          nodemailerlog: false
+          nodemailerdebug: false
 
