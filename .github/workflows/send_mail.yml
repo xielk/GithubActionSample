@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send mail
-        uses: DSubhadipSahoo/send-email@v1
+        uses: DSubhadipSahoo/send-email@v1.0.2
         with:
           # Required smtp host name. For Hotmail/Outlook, it's smtp.office365.com
           host: smtp.office365.com
