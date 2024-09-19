@@ -17,7 +17,7 @@ jobs:
           smtp-port: 587
           smtp-secure: false
           from-email: ${{ secrets.EMAIL_ADDRESS }}
-          to-email: recipient@example.com
+          to-email: xielk@yeah.net
           username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Test Email
