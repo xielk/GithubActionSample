@@ -1,0 +1,35 @@
+name: Install Swaks and Send Email
+
+on:
+  workflow_dispatch:  # 手动触发工作流程
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Swaks
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y swaks
+
+    - name: Send email using Swaks
+      run: |
+        EMAIL_TO="xielk@yeah.net"  # 替换为有效的收件人邮箱
+        EMAIL_FROM="${{ secrets.EMAIL_ADDRESS }}"  # 发件人邮箱
+        SMTP_SERVER="smtp.office365.com"  # Office 365 的 SMTP 服务器
+        SMTP_PORT="587"  # 使用 TLS 的端口
+        EMAIL_PASSWORD="${{ secrets.EMAIL_PASSWORD }}"  # 密码
+        EMAIL_SUBJECT="GitHub Actions Email Notification"  # 邮件主题
+        EMAIL_BODY="This is a test email sent from GitHub Actions using Swaks!"  # 邮件内容
+
+        swaks --to "$EMAIL_TO" \
+              --from "$EMAIL_FROM" \
+              --server "$SMTP_SERVER" \
+              --port "$SMTP_PORT" \
+              --auth LOGIN \
+              --auth-user "$EMAIL_FROM" \
+              --auth-password "$EMAIL_PASSWORD" \
+              --tls \
+              --header "Subject: $EMAIL_SUBJECT" \
+              --body "$EMAIL_BODY"
