@@ -1,7 +1,7 @@
 name: Send Email
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发工作流程
 
 jobs:
   send_email:
@@ -11,12 +11,12 @@ jobs:
     - name: Send email notification
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.example.com  # 你的 SMTP 服务器地址
-        server_port: 465  # SMTP 服务器端口
-        username: ${{ secrets.EMAIL_ADDRESS }}  # 你的邮箱
-        password: ${{ secrets.EMAIL_PASSWORD }}  # 你的邮箱密码
+        server_address: smtp-mail.outlook.com  # Hotmail 的 SMTP 服务器
+        server_port: 587  # 使用 TLS
+        username: ${{ secrets.EMAIL_ADDRESS }}  # 你的 Hotmail 地址
+        password: ${{ secrets.EMAIL_PASSWORD }}  # 你的 Hotmail 密码或应用专用密码
         subject: 'GitHub Actions Email Notification'
         body: 'This is a test email sent from GitHub Actions!'
         to: recipient@example.com  # 收件人邮箱
         from: ${{ secrets.EMAIL_ADDRESS }}  # 发件人邮箱
-        secure: true  # 使用 SSL/TLS 加密
+        secure: true  # 使用 SSL/TLS
