@@ -1,0 +1,46 @@
+name: Send Email Manually
+
+# 手动触发 workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  send_mail:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Send mail
+      if: always()  # 无论 job 成功或失败都执行发送邮件的步骤
+      uses: dawidd6/action-send-mail@v2
+      with:
+        # Mail server settings (Gmail)
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true  # 使用 SSL 加密连接
+
+        # User credentials from GitHub Secrets
+        username: ${{ secrets.EMAIL_ADDRESS }}  # 在 GitHub Secrets 中配置邮箱地址
+        password: ${{ secrets.EMAIL_PASSWORD }} # 在 GitHub Secrets 中配置邮箱密码或授权码
+
+        # Email subject
+        subject: '${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}'
+
+        # Email body as text
+        body: |
+          Hello,
+
+          The ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}.
+
+          - Event: ${{ github.event_name }}
+          - Commit: ${{ github.sha }}
+          - Ref: ${{ github.ref }}
+          - Actor: ${{ github.actor }}
+
+        # Recipients (comma-separated string)
+        to: xielk@yeah.net,5817253@qq.com
+
+        # From email address
+        from: XYZ <${{ secrets.EMAIL_ADDRESS }}>
