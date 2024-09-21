@@ -1,35 +1,43 @@
-name: Install Swaks and Send Email
+name: Check SMTP Port and Send Email
 
 on:
-  workflow_dispatch:  # 手动触发工作流程
+  workflow_dispatch:
 
 jobs:
-  send_email:
+  check_smtp_port:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Swaks
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y swaks
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Send email using Swaks
+    - name: Check if SMTP port 465 is open
       run: |
-        EMAIL_TO="xielk@yeah.net"  # 替换为有效的收件人邮箱
-        EMAIL_FROM="${{ secrets.EMAIL_ADDRESS }}"  # 发件人邮箱
-        SMTP_SERVER="smtp.office365.com"  # Office 365 的 SMTP 服务器
-        SMTP_PORT="587"  # 使用 TLS 的端口
-        EMAIL_PASSWORD="${{ secrets.EMAIL_PASSWORD }}"  # 密码
-        EMAIL_SUBJECT="GitHub Actions Email Notification"  # 邮件主题
-        EMAIL_BODY="This is a test email sent from GitHub Actions using Swaks!"  # 邮件内容
+        nc -zv smtp.office365.com 465 && echo "smtp port open" || echo "smtp port closed"
+    
+    - name: Send mail if port is open
+      if: success()  # 仅在上一步检查成功时才发送邮件
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.office365.com
+        server_port: 465
+        secure: true  # 使用 SSL 加密连接
 
-        swaks --to "$EMAIL_TO" \
-              --from "$EMAIL_FROM" \
-              --server "$SMTP_SERVER" \
-              --port "$SMTP_PORT" \
-              --auth LOGIN \
-              --auth-user "$EMAIL_FROM" \
-              --auth-password "$EMAIL_PASSWORD" \
-              --tls \
-              --header "Subject: $EMAIL_SUBJECT" \
-              --body "$EMAIL_BODY"
+        # User credentials from GitHub Secrets
+        username: ${{ secrets.EMAIL_ADDRESS }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+
+        # Email subject
+        subject: '${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}'
+
+        # Email body as text
+        body: |
+          Hello,
+
+          The ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}.
+
+        # Recipients (comma-separated string)
+        to: xielk@yeah.net,5817253@qq.com
+
+        # From email address
+        from: XYZ <${{ secrets.EMAIL_ADDRESS }}>
