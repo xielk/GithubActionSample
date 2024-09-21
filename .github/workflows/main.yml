@@ -16,8 +16,8 @@ jobs:
       if: always()  # 无论 job 成功或失败都执行发送邮件的步骤
       uses: dawidd6/action-send-mail@v2
       with:
-        # Mail server settings (Gmail)
-        server_address: smtp.gmail.com
+        # Mail server settings (smtp.office365.com)
+        server_address: smtp.office365.com
         server_port: 465
         secure: true  # 使用 SSL 加密连接
 
