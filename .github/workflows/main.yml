@@ -1,27 +1,36 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
 name: Send Cloudflare Analytics Notification
 
 on:
-  workflow_dispatch:  # 手动触发
+  schedule:
+    # 设置启动时间，为 UTC 时间, UTC23点 对应北京时间早7点
+    - cron : '00 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  send-notification:
+  build:
+
     runs-on: ubuntu-latest
-
+    env:
+      TZ: Asia/Shanghai
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
       with:
-        python-version: '3.8'  # 你可以根据需要修改 Python 版本
-
+        python-version: "3.12"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests
-
-    - name: Run script
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Run weather Report
+      run: |
+        python report_cdn.py
       env:
         CF_API_KEY: ${{ secrets.CF_API_KEY }}
         ZONE_ID: ${{ secrets.ZONE_ID }}
@@ -29,4 +38,3 @@ jobs:
         APP_SECRET: ${{ secrets.APP_SECRET }}
         OPEN_ID: ${{ secrets.OPEN_ID }}
         TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
-      run: python report_cdn.py  # 替换为你的 Python 脚本名
