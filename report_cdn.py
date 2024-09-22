@@ -1,5 +1,5 @@
 import os
-import requests
+import requests as req
 import json
 import datetime
 
@@ -11,8 +11,9 @@ appSecret = os.environ.get("APP_SECRET")
 openId = os.environ.get("OPEN_ID")
 weather_template_id = os.environ.get("TEMPLATE_ID")
 
+
 # 发送消息
-def send_weather(access_token, bandwidth, requests):
+def send_weather(access_token):
     today_str = datetime.date.today().strftime("%Y年%m月%d日")
     body = {
         "touser": openId.strip(),
@@ -33,15 +34,25 @@ def send_weather(access_token, bandwidth, requests):
             }
         }
     }
+    
     url = f'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={access_token}'
-    print(requests.post(url, json=body).text)
+    response = req.post(url, json=body)
+    
+    # 检查响应状态
+    if response.status_code == 200:
+        print("消息发送成功:", response.json())
+    else:
+        print("发送失败:", response.status_code, response.text)
 
 # 获取access token
 def get_access_token():
     url = f'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={appID.strip()}&secret={appSecret.strip()}'
-    response = requests.get(url).json()
+    response = req.get(url).json()
     return response.get('access_token')
 
 if __name__ == '__main__':
     access_token = get_access_token()
-    send_weather(access_token, "10.00 GB", "100 次")  # 测试调用
+    if access_token:
+        send_weather(access_token)  # 测试调用
+    else:
+        print("获取 access_token 失败")
