@@ -63,7 +63,9 @@ def get_cloudflare_stats():
         
         data = response.json()
         
-        if 'errors' not in data and data.get('data'):
+        
+        if data.get('data') and data['data']['viewer']['zones']:
+
             # 根据实际返回的数据结构提取数据
             total_bytes = data['data']['viewer']['zones'][0]['httpRequests1dGroups'][0]['sum']['bytes']
             total_requests = data['data']['viewer']['zones'][0]['httpRequests1dGroups'][0]['sum']['requests']
