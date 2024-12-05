@@ -10,7 +10,13 @@ zone_id = os.environ.get("ZONE_ID")
 appID = os.environ.get("APP_ID")
 appSecret = os.environ.get("APP_SECRET")
 # 将 openId 修改为一个用户 ID 列表
-openIds = os.environ.get("OPEN_IDS").split(',')  # 以逗号分隔的用户 ID 列表
+
+# 检查并获取多个用户的 OpenID
+openIds_str = os.environ.get("OPEN_IDS")
+if openIds_str:
+    openIds = openIds_str.split(',')  # 以逗号分隔的用户 ID 列表
+else:
+    raise ValueError("环境变量 OPEN_IDS 未设置或为空，请设置以逗号分隔的用户 ID 列表。")
 weather_template_id = os.environ.get("TEMPLATE_ID")
 
 def get_cloudflare_stats():
