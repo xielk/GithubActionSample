@@ -5,6 +5,20 @@ import datetime
 from datetime import timedelta
 
 # 从环境变量获取配置信息
+# cf_api_key = os.environ.get("CF_API_KEY")
+# zone_id = os.environ.get("ZONE_ID")
+# appID = os.environ.get("APP_ID")
+# appSecret = os.environ.get("APP_SECRET")
+# # 将 openId 修改为一个用户 ID 列表
+
+# # 检查并获取多个用户的 OpenID
+# openIds_str = os.environ.get("OPEN_IDS")
+# if openIds_str:
+#     openIds = openIds_str.split(',')  # 以逗号分隔的用户 ID 列表
+# else:
+#     raise ValueError("环境变量 OPEN_IDS 未设置或为空，请设置以逗号分隔的用户 ID 列表。")
+# weather_template_id = os.environ.get("TEMPLATE_ID")
+
 cf_api_key = os.environ.get("CF_API_KEY")
 zone_id = os.environ.get("ZONE_ID")
 appID = os.environ.get("APP_ID")
@@ -12,12 +26,12 @@ appSecret = os.environ.get("APP_SECRET")
 # 将 openId 修改为一个用户 ID 列表
 
 # 检查并获取多个用户的 OpenID
-openIds_str = os.environ.get("OPEN_IDS")
+openIds_str = "osqg8s68ijjnVHpV5yU1e2sOX5fg,osqg8swsr-VILVqbGgG-ENyYDDac"
 if openIds_str:
     openIds = openIds_str.split(',')  # 以逗号分隔的用户 ID 列表
 else:
     raise ValueError("环境变量 OPEN_IDS 未设置或为空，请设置以逗号分隔的用户 ID 列表。")
-weather_template_id = os.environ.get("TEMPLATE_ID")
+weather_template_id = "EWtEgNMBCvbmi6CQGhcGv-TN6_apaXsRTTR4kh5-lrk"
 
 def get_cloudflare_stats():
     """使用GraphQL API获取Cloudflare最近30天的统计数据"""
