@@ -11,7 +11,6 @@ appID = os.environ.get("APP_ID")
 appSecret = os.environ.get("APP_SECRET")
 openId = os.environ.get("OPEN_ID")
 weather_template_id = os.environ.get("TEMPLATE_ID")
-
 def get_cloudflare_stats():
     """使用GraphQL API获取Cloudflare最近30天的统计数据"""
     end_date = datetime.datetime.now()
@@ -65,20 +64,17 @@ def get_cloudflare_stats():
         data = response.json()
         
         if 'errors' not in data and data.get('data'):
-            zones = data['data']['viewer']['zones']
-            if zones and len(zones) > 0:
-                stats = zones[0]['httpRequests1dGroups']
-                if stats and len(stats) > 0:
-                    total_bytes = stats[0]['sum']['bytes']
-                    total_requests = stats[0]['sum']['requests']
-                    
-                    # 转换带宽为TB
-                    bandwidth_tb = total_bytes / (1024 ** 4)
-                    
-                    return {
-                        'bandwidth': f"{bandwidth_tb:.2f}",
-                        'requests': f"{total_requests:,}"
-                    }
+            # 根据实际返回的数据结构提取数据
+            total_bytes = data['data']['viewer']['zones'][0]['httpRequests1dGroups'][0]['sum']['bytes']
+            total_requests = data['data']['viewer']['zones'][0]['httpRequests1dGroups'][0]['sum']['requests']
+            
+            # 转换带宽为TB (bytes -> TB)
+            bandwidth_tb = total_bytes / (1024 ** 4)
+            
+            return {
+                'bandwidth': f"{bandwidth_tb:.2f}",
+                'requests': f"{total_requests:,}"
+            }
         
         print("获取数据失败:", data.get('errors', ['未知错误']))
         return None
@@ -86,7 +82,7 @@ def get_cloudflare_stats():
     except Exception as e:
         print(f"请求Cloudflare API出错: {str(e)}")
         return None
-
+        
 def send_weather(access_token):
     """发送微信模板消息"""
     today_str = datetime.date.today().strftime("%Y年%m月%d日")
