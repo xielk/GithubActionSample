@@ -6,7 +6,7 @@ name: Send Cloudflare Analytics Notification
 on:
   schedule:
     # 设置启动时间，为 UTC 时间, UTC23点 对应北京时间早7点
-    - cron : '00 07 50 * *'
+    - cron : '50 07 00 * *'
   workflow_dispatch:
 
 permissions:
